@@ -1,0 +1,189 @@
+# Default configuration for GNN-DR dimensionality reduction
+# Trains on CIFAR-10, MNIST, Fashion-MNIST; evaluates on training + held-out datasets
+
+dataset:
+  dataset: multi_clip
+  
+  # Training datasets with sampling weights
+  # Higher weight = more frequent sampling during training
+  train_datasets:
+    - name: cifar10_clip
+      weight: 1.0
+    - name: mnist_clip
+      weight: 1.0
+    - name: fashion_mnist_clip
+      weight: 1.0
+
+training:
+  lr: 0.0001
+  weight_decay: 0.00001
+  epochs: 200
+  batch_size: 2
+  iter_mean: 5.0
+  iter_var: 1.0
+  run_number: 1
+  randomize_between_epochs: false
+  use_node_budget_batching: true
+  max_nodes_per_batch: 10000
+  max_graphs_per_batch: 4
+  min_batch_size: 1
+
+model:
+  conv: gru
+  hidden_dimension: 64
+  hidden_state_factor: 4.0
+  mlp_depth: 1
+  out_dim: 2
+  use_beacons: false
+  laplace_eigvec: 0
+  pca_dim: 2
+  random_in_channels: 0
+  clip_in_channels: 0
+  aggregation: add
+  normalization: LayerNorm
+  dropout: 0.1
+  skip_previous: true
+  skip_input: false
+  rewiring: neg_sample
+  knn_k: 15
+  neg_sample_multiplier: 10.0
+  neg_sample_force_undirected: true
+  use_edge_attr: true 
+  alt_freq: 2
+  rewiring_precompute: true
+
+coarsening:
+  coarsen: false
+  coarsen_prob: 0.8
+  coarsen_noise: 0.0
+  coarsen_k: 5
+  coarsen_r: 0.8
+  coarsen_algo: affinity_GS
+  coarsen_min_size: 100
+
+replay_buffer:
+  replay_buffer_size: 64
+  replay_train_replacement_prob: 0.5
+  replay_buffer_replacement_prob: 1.0
+  num_replay_batches: 1
+  use_gpu_replay_buffer: true
+  accumulate_replay_gradients: true
+
+validation:
+  num_layers: 10
+  visualize: true
+  num_graphs_to_visualize: 3
+  visualization_interval: 1
+  node_size: 25
+  edge_width: 0.05  
+  figure_size: 10
+
+logging:
+  log_level: detailed
+  log_replay_buffer: true
+  log_loss_components: true
+  log_gradients: false
+  log_dataset_stats: false
+  log_validation_per_graph: false
+  log_every_n_steps: 50
+  log_to_console: true
+
+  tfpqm_enabled: true            # Enable tf-projection-qm metrics
+  tfpqm_k: 15                    # k neighbors for local structure metrics
+  tfpqm_n_classes: null          # Number of classes (null = auto-detect from labels)
+  tfpqm_selected_metrics: null   # null = all metrics, or list of specific metrics
+  
+  # DR-specific metrics logging
+  dr_metrics_interval: 1
+  dr_compute_trustworthiness: false
+  dr_compute_continuity: false
+  dr_compute_knn_recall: false
+  dr_compute_distance_correlation: false
+  dr_compute_silhouette: false
+  dr_compute_umap_loss: false
+  dr_generate_scatter_plots: true
+  dr_scatter_plot_interval: 5
+  dr_track_embedding_stats: false
+
+dimensionality_reduction:
+  enabled: true
+  clip_model: "openai/CLIP-vit-base-patch32"
+  knn_k: 15
+  subset_sizes: [10, 20, 50, 100, 200, 500, 750]
+  
+  # UMAP loss parameters
+  umap_loss_type: 'umap'
+  umap_repulsion_weight: 5.0
+  umap_edge_sample_rate: 1.0
+  umap_min_dist: 0.1
+  umap_spread: 1.0
+  umap_a: null
+  umap_b: null
+
+  umap_use_weighted_loss: true
+  
+  # UMAP sampling parameters
+  umap_num_positive_samples: 100000
+  umap_num_negatives_per_edge: 10
+  
+  # Legacy parameters (ignored when umap_loss_type='umap')
+  umap_neg_sample_rate: 10.0
+  umap_use_efficient: false
+  
+  # Dynamic dataset settings
+  use_dynamic_dataset: true
+  n_samples_per_size: 100
+  val_test_subset_size: 1000
+  use_dynamic_dataset_gpu: true
+  
+
+# Multi-size evaluation across training and held-out datasets
+multi_size_evaluation:
+  enabled: true
+  
+  # Default evaluation sizes
+  eval_sizes: [500, 1000]
+  
+  # How often to evaluate each size (in epochs)
+  eval_intervals:
+    100: 1
+    500: 1
+    1000: 1
+    10000: 5
+  
+  # Multi-round evaluation
+  round_counts: [5, 10, 20]
+  multi_round_interval: 1
+  multi_round_sizes: [1000]
+  
+  # Visualizations
+  generate_scatter_plots: true
+  viz_sizes: [500, 1000, 10000]
+  viz_interval: 1
+  
+  # Evaluation datasets: training (in-domain) and held-out (cross-domain)
+  eval_datasets:
+    - name: cifar10_clip
+      label: cifar10
+    - name: mnist_clip
+      label: mnist
+    - name: fashion_mnist_clip
+      label: fashion_mnist
+    - name: flowers102_clip
+      label: flowers102
+    - name: kmnist_clip
+      label: kmnist
+    - name: fgvc_aircraft_clip
+      label: fgvc_aircraft
+    - name: oxford_pets_clip
+      label: oxford_pets
+    - name: food101_clip
+      label: food101
+
+
+device: 0
+verbose: true
+model_name: "GNN-PCA-candidate"
+wandb_project_name: "GNN-DR"
+store_models: true
+use_cupy: true

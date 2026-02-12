@@ -1,0 +1,116 @@
+# Minimal test configuration for verifying the training pipeline works.
+# Small network, few epochs, tiny datasets. Should complete in ~1 minute on CPU.
+
+dataset:
+  dataset: mnist_clip
+
+training:
+  lr: 0.001
+  weight_decay: 0.0
+  epochs: 3
+  batch_size: 2
+  iter_mean: 3.0
+  iter_var: 1.0
+  run_number: 1
+  randomize_between_epochs: false
+  use_node_budget_batching: false
+  max_nodes_per_batch: 1000
+  max_graphs_per_batch: 4
+  min_batch_size: 1
+
+model:
+  conv: gru
+  hidden_dimension: 16
+  hidden_state_factor: 2.0
+  mlp_depth: 1
+  out_dim: 2
+  use_beacons: false
+  laplace_eigvec: 0
+  pca_dim: 2
+  random_in_channels: 0
+  clip_in_channels: 0
+  aggregation: add
+  normalization: LayerNorm
+  dropout: 0.0
+  skip_previous: true
+  skip_input: false
+  rewiring: neg_sample
+  knn_k: 5
+  neg_sample_multiplier: 5.0
+  neg_sample_force_undirected: true
+  use_edge_attr: true
+  alt_freq: 2
+  rewiring_precompute: true
+
+coarsening:
+  coarsen: false
+
+replay_buffer:
+  replay_buffer_size: 4
+  replay_train_replacement_prob: 0.5
+  replay_buffer_replacement_prob: 1.0
+  num_replay_batches: 1
+  use_gpu_replay_buffer: false
+  accumulate_replay_gradients: true
+
+validation:
+  num_layers: 3
+  visualize: false
+  num_graphs_to_visualize: 1
+  visualization_interval: 1
+  node_size: 25
+  edge_width: 0.05
+  figure_size: 10
+
+logging:
+  log_level: minimal
+  log_replay_buffer: false
+  log_loss_components: false
+  log_gradients: false
+  log_dataset_stats: false
+  log_validation_per_graph: false
+  log_every_n_steps: 1
+  log_to_console: true
+  tfpqm_enabled: false
+  dr_metrics_interval: 1
+  dr_compute_trustworthiness: false
+  dr_compute_continuity: false
+  dr_compute_knn_recall: false
+  dr_compute_distance_correlation: false
+  dr_compute_silhouette: false
+  dr_compute_umap_loss: false
+  dr_generate_scatter_plots: false
+  dr_scatter_plot_interval: 999
+  dr_track_embedding_stats: false
+
+dimensionality_reduction:
+  enabled: true
+  clip_model: "openai/CLIP-vit-base-patch32"
+  knn_k: 5
+  subset_sizes: [50, 100]
+  umap_loss_type: 'umap'
+  umap_repulsion_weight: 5.0
+  umap_edge_sample_rate: 1.0
+  umap_min_dist: 0.1
+  umap_spread: 1.0
+  umap_a: null
+  umap_b: null
+  umap_use_weighted_loss: false
+  umap_num_positive_samples: 100
+  umap_num_negatives_per_edge: 5
+  umap_neg_sample_rate: 5.0
+  umap_use_efficient: false
+  use_dynamic_dataset: true
+  n_samples_per_size: 4
+  val_test_subset_size: 100
+  use_dynamic_dataset_gpu: false
+
+multi_size_evaluation:
+  enabled: false
+
+device: -1  # CPU
+verbose: true
+model_name: "test-run"
+wandb_project_name: "GNN-DR-test"
+store_models: false
+use_cupy: false
