@@ -1,0 +1,35 @@
+# Data, models, and results (large / generated)
+data/
+models/
+results/
+figures/
+wandb/
+GNN-DR-test/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+
+# PyTorch / Lightning
+*.ckpt
+*.pt
+*.pth
+lightning_logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+*.log

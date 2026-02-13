@@ -1,0 +1,13 @@
+data/
+models/
+results/
+figures/
+wandb/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.git/
+.gitignore
+*.ckpt
+*.pt
