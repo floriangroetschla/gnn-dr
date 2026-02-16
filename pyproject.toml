@@ -27,6 +27,7 @@ dependencies = [
     "wandb",
     "umap-learn",
     "networkx",
+    "clip @ git+https://github.com/openai/CLIP.git",
 ]
 
 [project.optional-dependencies]

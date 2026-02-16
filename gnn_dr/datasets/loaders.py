@@ -17,13 +17,24 @@ from gnn_dr.utils.constants import DATA_ROOT
 
 def _get_clip_dataset_class(dataset_name: str):
     """Get the CLIP dataset class by name."""
-    # Import here to ensure all datasets are registered
-    from .mnist_dr import MNISTClipDynamicGPU
-    from .cifar_dr import CIFAR10ClipDynamicGPU, CIFAR100ClipDynamicGPU
-    from .fashion_mnist_dr import FashionMNISTClipDynamicGPU
-    from .laion_dr import LAIONClipDynamicGPU
+    # Import here to ensure all datasets are registered via their decorators
+    from . import mnist_dr  # noqa: F401
+    from . import cifar_dr  # noqa: F401
+    from . import fashion_mnist_dr  # noqa: F401
+    from . import laion_dr  # noqa: F401
+    from . import kmnist_dr  # noqa: F401
+    from . import flowers102_dr  # noqa: F401
+    from . import fgvc_aircraft_dr  # noqa: F401
+    from . import oxford_pets_dr  # noqa: F401
+    from . import food101_dr  # noqa: F401
+    from . import emnist_dr  # noqa: F401
+    from . import stl10_dr  # noqa: F401
+    from . import svhn_dr  # noqa: F401
+    from . import caltech_dr  # noqa: F401
+    from . import dtd_dr  # noqa: F401
+    from . import stanford_cars_dr  # noqa: F401
     from .torchvision_clip import get_registered_clip_dataset
-    
+
     return get_registered_clip_dataset(dataset_name)
 
 

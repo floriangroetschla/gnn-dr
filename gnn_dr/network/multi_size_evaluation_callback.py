@@ -252,7 +252,8 @@ class MultiSizeEvaluationCallback(Callback):
         try:
             from gnn_dr.network.preprocessing import preprocess_dataset_dr
             from gnn_dr.config import config_to_namespace
-            from gnn_dr.datasets.torchvision_clip import get_registered_clip_dataset
+            from gnn_dr.datasets.loaders import _get_clip_dataset_class
+            from gnn_dr.utils.constants import DATA_ROOT
             
             config_namespace = config_to_namespace(self.config)
             device = 'cuda' if self.config.device >= 0 else 'cpu'
@@ -266,8 +267,8 @@ class MultiSizeEvaluationCallback(Callback):
                 print(f"[Multi-Size Eval] Creating {label.upper()} evaluation graphs...")
                 
                 try:
-                    # Get the dataset class
-                    dataset_cls = get_registered_clip_dataset(name)
+                    # Get the dataset class (also ensures all datasets are registered)
+                    dataset_cls = _get_clip_dataset_class(name)
                     
                     # Determine which split to use for evaluation
                     # LAION has no test split, so always use train for LAION
@@ -290,11 +291,12 @@ class MultiSizeEvaluationCallback(Callback):
                     }
                     
                     # Add dataset-specific parameters
+                    # Use DATA_ROOT to match the training data loader's root path
                     if name == 'laion_clip':
                         ds_params['root'] = self.config.dimensionality_reduction.laion_data_dir
                         ds_params['num_chunks'] = self.config.dimensionality_reduction.laion_num_chunks
                     else:
-                        ds_params['root'] = self.config.dimensionality_reduction.clip_cache_dir
+                        ds_params['root'] = DATA_ROOT
                         ds_params['clip_model'] = self.config.dimensionality_reduction.clip_model
                     
                     dataset_helper = dataset_cls(**ds_params)
